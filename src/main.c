@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/04 16:27:13 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/06 17:56:46 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ int	main(int argc, char **argv, char **env)
 	if (access(argv[1], F_OK) < 0)
 		perror("Access");
 	path = get_env_value("PATH=", env);
+	if (!path)
+		exit_with_message("Unable to get PATH"); 
 	pipix = malloc(sizeof(t_pipex));
 	pipix->directories = ft_split(path, ':');
 	if (existing_cmd(argv[2], pipix->directories) == 0 || existing_cmd(argv[3],
@@ -38,10 +40,11 @@ int	main(int argc, char **argv, char **env)
 	{
 		ft_printf("Non existing command\n");
 		free(path);
-		free(pipix->directories);
+		free_tab(pipix->directories);
 		return (1);
 	}
-	printf("%s\n", path);
+	ft_printf("%s\n", path); //////////////////////////////// test ///////////////////////
+	init_pipex(pipix, argv);
 	free(path);
 	return (0);
 }
