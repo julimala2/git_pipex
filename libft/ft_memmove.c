@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 17:58:53 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/04/03 16:31:42 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:27:01 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,9 @@
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	unsigned long	i;
 	unsigned char	*t_dest;
 	unsigned char	*t_src;
 
-	i = 0;
 	t_dest = (unsigned char *)dest;
 	t_src = (unsigned char *)src;
 	if (t_dest > t_src)

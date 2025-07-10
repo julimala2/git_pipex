@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/06 17:56:46 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/10 18:49:19 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,31 +23,30 @@
 
 int	main(int argc, char **argv, char **env)
 {
-	t_pipex	*pipix;
-	char	*path;
+	t_pipex	*pipex;
+	
 
 	if (argc != 5)
-		exit_with_message("Invalid number of arguments\n");
+		ft_putendl_fd("Incorrect number of arguments", 2);
 	if (access(argv[1], F_OK) < 0)
 		perror("Access");
-	path = get_env_value("PATH=", env);
-	if (!path)
-		exit_with_message("Unable to get PATH"); 
-	pipix = malloc(sizeof(t_pipex));
-	pipix->directories = ft_split(path, ':');
-	if (existing_cmd(argv[2], pipix->directories) == 0 || existing_cmd(argv[3],
-			pipix->directories) == 0)
+	pipex = malloc(sizeof(t_pipex));
+	if (!pipex)
+		perror("pipex malloc");
+	init_struct(pipex);
+	init_pipex(pipex, argv, env);
+	ft_printf("%s\n", pipex->path); //////////////////////////////// test ///////////////////////
+	if (pipe(pipex->pipefd) == -1)
 	{
-		ft_printf("Non existing command\n");
-		free(path);
-		free_tab(pipix->directories);
-		return (1);
+		free_struct(pipex);
+		perror("Pipe");
 	}
-	ft_printf("%s\n", path); //////////////////////////////// test ///////////////////////
-	init_pipex(pipix, argv);
-	free(path);
+	ft_pipex(pipex, env);
+	free_struct(pipex);
 	return (0);
 }
+
+// pb avec get pathname a regler
 
 // Main checklist
 
