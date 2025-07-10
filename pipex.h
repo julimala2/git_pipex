@@ -6,7 +6,7 @@
 /*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/10 18:46:54 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/11 00:06:48 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdio.h>
 # include <errno.h>
 # include <sys/wait.h>
+# include <stdio.h>
 
 typedef struct s_pipex
 {

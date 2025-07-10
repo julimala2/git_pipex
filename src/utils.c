@@ -6,7 +6,7 @@
 /*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/10 18:52:10 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/11 00:11:32 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void init_struct(t_pipex *pipex)
     pipex->path = NULL;
     pipex->directories = NULL;
 }
-char	*get_env_value(char *value, char **env)
+char	*get_env_value(char *value, char **env)       ///// fonction testée OK
 {
 	size_t	len_value;
 	size_t	i;
