@@ -6,7 +6,7 @@
 /*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/11 01:01:26 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/11 18:53:38 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,24 +32,15 @@ int	main(int argc, char **argv, char **env)
 		perror("Access");
 	pipex = malloc(sizeof(t_pipex));
 	if (!pipex)
-		perror("pipex malloc");
+		perror("pipex malloc"); // exit
 	pipex->path = get_env_value("PATH=", env);
 	pipex->directories = ft_split(pipex->path, ':');
-	char **test = ft_split("Coucou je m'appelle Juliette", ' ');
-	int i = 0;
-	while (test[i++])
-		printf("%s\n", test[i]);
-	return 0;
-	while (pipex->directories && pipex->directories[i++])
-		printf("%s\n", pipex->directories[i]);  /// split finit par segfault alors que le dernier tab est set a NULL, il manque le premier mot
-	return 0;
 	init_struct(pipex);
 	init_pipex(pipex, argv, env);
-	ft_printf("%s\n", pipex->path); //////////////////////////////// test ///////////////////////
 	if (pipe(pipex->pipefd) == -1)
 	{
 		free_struct(pipex);
-		perror("Pipe");
+		perror("Pipe"); // prevoir exit and free
 	}
 	ft_pipex(pipex, env);
 	free_struct(pipex);

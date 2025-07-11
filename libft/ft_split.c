@@ -3,33 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/09 17:25:52 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/01 14:47:22 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/11 16:59:57 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_countlines(const char *s, char c)
+static int	ft_countwords(const char *str, char c1)
 {
-	int	count;
 	int	i;
+	int	w;
 
-	if (!s)
+	if (!str || str[0] == '\0')
 		return (0);
-	count = 1;
+	if (!ft_isprint(c1) && str)
+		return (1);
 	i = 0;
-	while (s[i])
+	w = 1;
+	while (str[i] == c1)
+		i++;
+	while (str[i])
 	{
-		if (s[i] == c)
-			count++;
+		if ((str[i] == c1) && (str[i - 1] != c1))
+			w++;
 		i++;
 	}
-	if (s[i - 1] == c)
-		count++;
-	return (count);
+	if (str[i - 1] == c1)
+		return (w - 1);
+	else
+		return (w);
 }
 
 static char	**ft_fill_tab(char **tab, const char *str, char c, int w)
@@ -66,7 +71,7 @@ char	**ft_split(const char *s, char c)
 	if (!s)
 		return (NULL);
 	x = 0;
-	w = ft_countlines(s, c);
+	w = ft_countwords(s, c);
 	tab = malloc((w + 1) * sizeof(char *));
 	if (!tab)
 		return (NULL);

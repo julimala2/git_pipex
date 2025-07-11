@@ -6,7 +6,7 @@
 /*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/11 00:06:48 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/11 17:16:27 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int			main(int argc, char **argv, char **env);
 
 ///////////////////////////// utils.c ///////////////////////////////////
 char		*get_env_value(char *value, char **env);
-void	get_pathname(char **cmd, t_pipex *pipex);
+void	get_pathname(char **cmd, t_pipex *pipex, int j);
 void    init_pipex(t_pipex *pipex, char **av, char **env);
 void init_struct(t_pipex *pipex);
 
