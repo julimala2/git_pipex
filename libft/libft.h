@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 14:03:56 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/10 17:32:14 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/17 17:51:13 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define LIBFT_H
 
 # include <stddef.h>
+# include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <stdint.h>
 
 typedef struct s_list
 {
@@ -49,7 +49,7 @@ int					ft_atoi(const char *nptr);
 void				*ft_calloc(size_t nmemb, size_t size);
 char				*ft_strdup(const char *s);
 char				*ft_strjoin(const char *s1, const char *s2);
-char    			*ft_strjoin2(char *s1, char *s2, int a, int b);
+char				*ft_strjoin2(char *s1, char *s2, int a, int b);
 char				*ft_substr(const char *s, unsigned int start, size_t len);
 char				*ft_strtrim(const char *s1, const char *set);
 char				**ft_split(const char *s, char c);

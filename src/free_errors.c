@@ -3,26 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   free_errors.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:11:29 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/10 18:24:51 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/17 17:43:35 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-void	exit_with_message(char *str)
+void	exit_with_message(char *str, const char *str2, int n)
 {
 	ft_putendl_fd("Error\n", 2);
-	ft_putendl_fd(str, 2);
-	exit(1);
+	if (str)
+		ft_putendl_fd(str, 2);
+	if (str2)
+		perror(str2);
+	exit(n);
 }
 
 void	free_tab(char **tab)
 {
-	int i; 
-	
+	int	i;
+
 	i = 0;
 	while (tab[i])
 	{
@@ -31,12 +34,13 @@ void	free_tab(char **tab)
 	}
 	free(tab);
 }
-void	exit_with_message_and_free(char *str, t_pipex *pipex)
+
+void	exit_with_message_and_free(char *str, t_pipex *pipex, int n)
 {
 	ft_putendl_fd("Error\n", 2);
 	ft_putendl_fd(str, 2);
 	free_struct(pipex);
-	exit(1);
+	exit(n);
 }
 
 void	free_struct(t_pipex *pipex)
@@ -55,5 +59,6 @@ void	free_struct(t_pipex *pipex)
 			free_tab(pipex->cmd1);
 		if (pipex->cmd2)
 			free_tab(pipex->cmd2);
+		free(pipex);
 	}
 }

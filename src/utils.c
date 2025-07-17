@@ -3,25 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/11 18:53:02 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/17 17:50:13 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-void init_struct(t_pipex *pipex)
+void	init_struct(t_pipex *pipex)
 {
-    pipex->infile = -1;
-    pipex->outfile = -1;
-    pipex->cmd1 = NULL;
-    pipex->cmd2 = NULL;
-    pipex->path = NULL;
-    pipex->directories = NULL;
+	pipex->infile = -1;
+	pipex->outfile = -1;
+	pipex->cmd1 = NULL;
+	pipex->cmd2 = NULL;
+	pipex->path = NULL;
+	pipex->directories = NULL;
+	pipex->outfile_error = 1;
+	pipex->pathname_cmd1 = NULL;
+	pipex->pathname_cmd2 = NULL;
 }
-char	*get_env_value(char *value, char **env)       ///// fonction testée OK
+
+char	*get_env_value(char *value, char **env)
 {
 	size_t	len_value;
 	size_t	i;
@@ -41,7 +45,7 @@ void	get_pathname(char **cmd, t_pipex *pipex, int j)
 {
 	int		i;
 	char	*temp;
-	char *path;
+	char	*path;
 
 	path = NULL;
 	i = 0;
@@ -63,29 +67,49 @@ void	get_pathname(char **cmd, t_pipex *pipex, int j)
 	free(temp);
 }
 
-void    init_pipex(t_pipex *pipex, char **av, char **env)
-{ 
-    pipex->infile = open(av[1], O_RDONLY);
-    if (pipex->infile == -1)
-        perror("Opening infile");
-    pipex->outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (pipex->outfile == -1)
-        perror("Opening or creating outfile");
-    pipex->cmd1 = ft_split(av[2], ' ');
-    if (!pipex->cmd1)
-    	exit_with_message_and_free("Error\nSplit cmd1", pipex);
-    pipex->cmd2 = ft_split(av[3], ' ');
-    if (!pipex->cmd2)
-    	exit_with_message_and_free("Error\nSplit cmd2", pipex);
-    pipex->path = get_env_value("PATH=", env);							/////// test OK
+void	init_pipex(t_pipex *pipex, char **av, char **env)
+{
+	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
+		pipex->infile = 0;
+	else
+	{
+		pipex->infile = open(av[1], O_RDONLY);
+		if (pipex->infile == -1)
+			perror("Opening infile");
+	}
+	pipex->cmd1 = ft_split(av[2], ' ');
+	if (!pipex->cmd1)
+		exit_with_message_and_free("Error\nSplit cmd1", pipex, 1);
+	pipex->cmd2 = ft_split(av[3], ' ');
+	if (!pipex->cmd2)
+		exit_with_message_and_free("Error\nSplit cmd2", pipex, 1);
+	pipex->path = get_env_value("PATH=", env);
 	if (pipex->path == NULL)
-		exit_with_message_and_free("Unable to get PATH", pipex);
-    pipex->directories = ft_split(pipex->path, ':');					/////// test OK
-    if (!pipex->directories)
-    	exit_with_message_and_free("Error\nSplit directories", pipex);  // modifier msg
-    get_pathname(pipex->cmd1, pipex, 1);								/////// test OK
-    get_pathname(pipex->cmd2, pipex, 2);								/////// test OK
-    if (!pipex->cmd1 || !pipex->cmd2)
-		exit_with_message_and_free("Non existing command", pipex);
-    // prevoir des exit et erreurs en cas de chaine nulle
+		exit_with_message_and_free("Unable to get PATH", pipex, 1);
+	pipex->directories = ft_split(pipex->path, ':');
+	if (!pipex->directories)
+		exit_with_message_and_free("Error\nSplit directories", pipex, 1);
+	get_pathname(pipex->cmd1, pipex, 1);
+	get_pathname(pipex->cmd2, pipex, 2);
+}
+
+void	init_outfile(t_pipex *pipex, char **av)
+{
+	if (access(av[4], F_OK) < 0)
+	{
+		pipex->outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		pipex->outfile_error = 0;
+	}
+	else
+	{
+		if (access(av[4], W_OK) < 0)
+			perror("Access outfile");
+		else
+		{
+			pipex->outfile = open(av[4], O_WRONLY | O_TRUNC);
+			pipex->outfile_error = 0;
+		}
+	}
+	if (pipex->outfile == -1)
+		perror("Opening or creating outfile");
 }

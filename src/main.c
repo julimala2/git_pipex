@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/11 18:53:38 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/17 17:49:05 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,47 +24,30 @@
 int	main(int argc, char **argv, char **env)
 {
 	t_pipex	*pipex;
-	
+	int		ret;
 
+	ret = 0;
 	if (argc != 5)
-		ft_putendl_fd("Incorrect number of arguments", 2);
+		exit_with_message("Incorrect number of arguments", "", 1);
 	if (access(argv[1], F_OK) < 0)
-		perror("Access");
+		perror("Non existing infile");
 	pipex = malloc(sizeof(t_pipex));
 	if (!pipex)
-		perror("pipex malloc"); // exit
-	pipex->path = get_env_value("PATH=", env);
-	pipex->directories = ft_split(pipex->path, ':');
+		exit_with_message("", "pipex malloc", 1);
 	init_struct(pipex);
 	init_pipex(pipex, argv, env);
 	if (pipe(pipex->pipefd) == -1)
+		exit_with_message_and_free("Pipe", pipex, 1);
+	if (pipex->infile == 0)
 	{
+		init_outfile(pipex, argv);
 		free_struct(pipex);
-		perror("Pipe"); // prevoir exit and free
+		return (0);
 	}
-	ft_pipex(pipex, env);
+	ret = ft_pipex(pipex, argv, env);
 	free_struct(pipex);
-	return (0);
+	return (ret);
 }
-
-// pb avec get pathname a regler
-
-// Main checklist
-
-// OK ---- Check the existence of infile and outfile
-// be sure to understand what > does when the file does not exist
-// Create the necessary pipe (or pipes)
-// Create a child process for each command
-// Wait for all the processes to end before writing to the outfile
-// When using here_doc, the second argument is not a command ;)
-
-// Execute checklist
-// Remember that the execve() function needs the path to a binary file as parameter,
-	// so you'll have to find where the commands binaries are stored on your computer.
-// Before going further, you have to know how to find any command binary.
-// OK ---- Check in all possible locations if the binary (command) requested by the user exists.
-// "Build" the arguments array for the command.
-// Execute the command using execve()
 
 // int execve(const char *pathname, char *const argv[], char *const envp[]);
 

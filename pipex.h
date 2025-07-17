@@ -3,31 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/11 17:16:27 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/17 16:46:17 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include "libft/libft.h"
 # include "ft_printf/ft_printf.h"
-
-# include <sys/types.h>
-# include <unistd.h>
+# include "libft/libft.h"
+# include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
-# include <errno.h>
+# include <sys/types.h>
 # include <sys/wait.h>
-# include <stdio.h>
+# include <unistd.h>
 
 typedef struct s_pipex
 {
-	int	infile;
-	int	outfile;
+	int		infile;
+	int		outfile;
 	char	**cmd1;
 	char	**cmd2;
 	char	**directories;
@@ -35,6 +33,7 @@ typedef struct s_pipex
 	char	*pathname_cmd1;
 	char	*pathname_cmd2;
 	int		pipefd[2];
+	int		outfile_error;
 }			t_pipex;
 
 // changer le wildcard du makefile
@@ -43,20 +42,20 @@ int			main(int argc, char **argv, char **env);
 
 ///////////////////////////// utils.c ///////////////////////////////////
 char		*get_env_value(char *value, char **env);
-void	get_pathname(char **cmd, t_pipex *pipex, int j);
-void    init_pipex(t_pipex *pipex, char **av, char **env);
-void init_struct(t_pipex *pipex);
+void		get_pathname(char **cmd, t_pipex *pipex, int j);
+void		init_pipex(t_pipex *pipex, char **av, char **env);
+void		init_struct(t_pipex *pipex);
 
 ///////////////////////////// free_errors.c ///////////////////////////////////
-void		exit_with_message(char *str);
-void	exit_with_message_and_free(char *str, t_pipex *pipex);
-void	free_tab(char **tab);
-void	free_struct(t_pipex *pipex);
+void		exit_with_message(char *str, const char *str2, int n);
+void		exit_with_message_and_free(char *str, t_pipex *pipex, int n);
+void		free_tab(char **tab);
+void		free_struct(t_pipex *pipex);
 
 ///////////////////////////// pipex.c ///////////////////////////////////
-void    ft_pipex(t_pipex *pipex, char **env);
-void    cmd1_process(t_pipex *pipex, char **env);
-void    cmd2_process(t_pipex *pipex, char **env);
-
+int			ft_pipex(t_pipex *pipex, char **av, char **env);
+void		cmd1_process(t_pipex *pipex, char **env);
+void		cmd2_process(t_pipex *pipex, char **env);
+void		init_outfile(t_pipex *pipex, char **av);
 
 #endif
