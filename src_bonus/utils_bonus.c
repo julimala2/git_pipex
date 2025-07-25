@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/20 18:25:29 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:39:31 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,17 @@ void	init_struct(t_pipex_b *pipex, char **av)
 			perror("Opening infile");
 	}
 	pipex->outfile = -1;
-	pipex->cmd1 = NULL;
-	pipex->cmd2 = NULL;
+	pipex->cmd = NULL;
 	pipex->path = NULL;
 	pipex->directories = NULL;
 	pipex->outfile_error = 1;
-	pipex->pathname_cmd1 = NULL;
-	pipex->pathname_cmd2 = NULL;
+	pipex->pathname_cmd = NULL;
 	pipex->last_cmd = 0;
 	pipex->first_cmd = 0;
+	pipex->prev_fd = -1;
+	pipex->pids = malloc(pipex->cmd_count * sizeof(pid_t));
+	if (!pipex->pids)
+		exit_with_message_and_free("Malloc pids", pipex, 1);
 }
 
 char	*get_env_value(char *value, char **env)
@@ -51,7 +53,7 @@ char	*get_env_value(char *value, char **env)
 	return (NULL);
 }
 
-void	get_pathname(char **cmd, t_pipex_b *pipex, int j)
+void	get_pathname(char **cmd, t_pipex_b *pipex)
 {
 	int		i;
 	char	*temp;
@@ -65,10 +67,7 @@ void	get_pathname(char **cmd, t_pipex_b *pipex, int j)
 		path = ft_strjoin(pipex->directories[i], temp);
 		if (access(path, X_OK) == 0)
 		{
-			if (j == 1)
-				pipex->pathname_cmd1 = path;
-			else if (j == 2)
-				pipex->pathname_cmd2 = path;
+			pipex->pathname_cmd = path;
 			break ;
 		}
 		free(path);
@@ -77,40 +76,36 @@ void	get_pathname(char **cmd, t_pipex_b *pipex, int j)
 	free(temp);
 }
 
-void	init_pipex(t_pipex_b *pipex, char *av1, char *av2, char **env)
+void	init_pipex(t_pipex_b *pipex, char *av, char **env)
 {
-	pipex->cmd1 = ft_split(av1, ' ');
-	if (!pipex->cmd1)
-		exit_with_message_and_free("Error\nSplit cmd1", pipex, 1);
-	pipex->cmd2 = ft_split(av2, ' ');
-	if (!pipex->cmd2)
-		exit_with_message_and_free("Error\nSplit cmd2", pipex, 1);
+	pipex->cmd = ft_split(av, ' ');
+	if (!pipex->cmd)
+		exit_with_message_and_free("Split cmd", pipex, 1);
 	pipex->path = get_env_value("PATH=", env);
 	if (pipex->path == NULL)
 		exit_with_message_and_free("Unable to get PATH", pipex, 1);
 	pipex->directories = ft_split(pipex->path, ':');
 	if (!pipex->directories)
-		exit_with_message_and_free("Error\nSplit directories", pipex, 1);
-	get_pathname(pipex->cmd1, pipex, 1);
-	get_pathname(pipex->cmd2, pipex, 2);
+		exit_with_message_and_free("Split directories", pipex, 1);
+	get_pathname(pipex->cmd, pipex);
 }
 
-void	init_outfile(t_pipex_b *pipex, char **av)
+void	init_outfile(t_pipex_b *pipex)
 {
-	if (access(av[4], F_OK) < 0)
+	if (access(pipex->path_outfile, F_OK) < 0)
 	{
-		pipex->outfile = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		pipex->outfile_error = 0;
 	}
 	else
 	{
-		if (access(av[4], W_OK) < 0)
+		if (access(pipex->path_outfile, W_OK) < 0)
 			perror("Access outfile");
 		else
 		{
-			pipex->outfile = open(av[4], O_WRONLY | O_TRUNC);
+			pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_TRUNC);
 			pipex->outfile_error = 0;
-		}	// boucler sur les argv
+		}
 
 	}
 	if (pipex->outfile == -1)

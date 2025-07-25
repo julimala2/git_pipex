@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/20 18:25:08 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:37:25 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,25 @@ typedef struct s_pipex_b
 {
 	int		infile;
 	int		outfile;
-	char	**cmd1;
-	char	**cmd2;
+	char	**cmd;
 	char	**directories;
 	char	*path;
-	char	*pathname_cmd1;
-	char	*pathname_cmd2;
+	char	*pathname_cmd;
 	int		pipefd[2];
 	int		outfile_error;
 	int		last_cmd;
 	int		first_cmd;
+	int		prev_fd;
+	char	*path_outfile;
+	int		cmd_count;
+	pid_t	*pids;
 }			t_pipex_b;
 
-// changer le wildcard du makefile
-
-int			main(int argc, char **argv, char **env);
 
 ///////////////////////////// utils.c ///////////////////////////////////
 char		*get_env_value(char *value, char **env);
-void		get_pathname(char **cmd, t_pipex_b *pipex, int j);
-void		init_pipex(t_pipex_b *pipex, char *av1, char *av2, char **env);
+void		get_pathname(char **cmd, t_pipex_b *pipex);
+void		init_pipex(t_pipex_b *pipex, char *av, char **env);
 void		init_struct(t_pipex_b *pipex, char **av);
 
 ///////////////////////////// free_errors.c ///////////////////////////////////
@@ -55,10 +54,8 @@ void		free_tab(char **tab);
 void		free_struct(t_pipex_b *pipex);
 
 ///////////////////////////// pipex.c ///////////////////////////////////
-int			ft_pipex(t_pipex_b *pipex, char **av, char **env);
-void		cmd1_process(t_pipex_b *pipex, char **env);
-void		cmd2_process(t_pipex_b *pipex, char **env);
-void		init_outfile(t_pipex_b *pipex, char **av);
-void		inbetween_cmd(t_pipex_b *pipex, char **env);
+int			ft_pipex(t_pipex_b *pipex, char **env);
+void		cmd_process(t_pipex_b *pipex, char **env);
+void		init_outfile(t_pipex_b *pipex);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/20 18:26:13 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:39:03 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,11 @@ int	main(int argc, char **argv, char **env)
 	t_pipex_b	*pipex;
 	int			ret;
 	int			i;
+	int			j;
 
 	ret = 0;
 	i = 2;
+	j = 0;
 	if (argc < 5)
 		exit_with_message("Incorrect number of arguments", "", 1);
 	if (access(argv[1], F_OK) < 0)
@@ -37,23 +39,25 @@ int	main(int argc, char **argv, char **env)
 	if (!pipex)
 		exit_with_message("", "pipex malloc", 1);
 	init_struct(pipex, argv);
+	pipex->path_outfile = argv[argc - 1];
+	pipex->cmd_count = argc - 3;
 	if (pipex->infile == 0)
 	{
-		init_outfile(pipex, argv);
+		init_outfile(pipex);
 		free_struct(pipex);
 		return (0);
 	}
-	while (argv[i + 1] != argv[argc - 1])
+	while (i < pipex->cmd_count)
 	{
 		init_struct(pipex, argv);
-		if (argv[i-1] == argv[1])
+		if (argv[i - 1] == argv[1])
 			pipex->first_cmd = 1;
-		if (argv[i + 2] == argv[argc - 1])
+		if (argv[i + 1] == pipex->path_outfile)
 			pipex->last_cmd = 1;
-		init_pipex(pipex, argv[i], argv[i + 1], env);
+		init_pipex(pipex, argv[i], env);
 		if (pipe(pipex->pipefd) == -1)
 			exit_with_message_and_free("Pipe", pipex, 1);
-		ret = ft_pipex(pipex, argv, env);
+		ret = ft_pipex(pipex, env);
 		free_struct(pipex);
 		i++;
 	}
