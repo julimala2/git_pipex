@@ -6,13 +6,13 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/24 17:39:31 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:29:53 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex_bonus.h"
 
-void	init_struct(t_pipex_b *pipex, char **av)
+void	init_struct(t_pipex_b *pipex, char **av, char **env)
 {
 	pipex->infile = -1;
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
@@ -24,17 +24,24 @@ void	init_struct(t_pipex_b *pipex, char **av)
 			perror("Opening infile");
 	}
 	pipex->outfile = -1;
-	pipex->cmd = NULL;
 	pipex->path = NULL;
 	pipex->directories = NULL;
 	pipex->outfile_error = 1;
 	pipex->pathname_cmd = NULL;
-	pipex->last_cmd = 0;
-	pipex->first_cmd = 0;
-	pipex->prev_fd = -1;
-	pipex->pids = malloc(pipex->cmd_count * sizeof(pid_t));
-	if (!pipex->pids)
+	pipex->prev_fd = -1;                                   // et ca ???
+	pipex->pid = malloc(pipex->cmd_count * sizeof(pid_t));
+		// finalement est ce que j'en ai besoin ... je crois bien
+	if (!pipex->pid)
 		exit_with_message_and_free("Malloc pids", pipex, 1);
+	pipex->pipefd = malloc(sizeof(int *) * (pipex->cmd_count - 1));
+	if (!pipex->pipefd)
+		exit_with_message_and_free("Malloc pipefd", pipex, 1);
+	pipex->path = get_env_value("PATH=", env);
+	if (!pipex->path)
+		exit_with_message_and_free("Unable to get PATH", pipex, 1);
+	pipex->directories = ft_split(pipex->path, ':');
+	if (!pipex->directories)
+		exit_with_message_and_free("Split directories", pipex, 1);
 }
 
 char	*get_env_value(char *value, char **env)
@@ -76,17 +83,12 @@ void	get_pathname(char **cmd, t_pipex_b *pipex)
 	free(temp);
 }
 
-void	init_pipex(t_pipex_b *pipex, char *av, char **env)
+void	init_cmd(t_pipex_b *pipex, char *av)
 {
+	pipex->cmd = NULL;
 	pipex->cmd = ft_split(av, ' ');
 	if (!pipex->cmd)
 		exit_with_message_and_free("Split cmd", pipex, 1);
-	pipex->path = get_env_value("PATH=", env);
-	if (pipex->path == NULL)
-		exit_with_message_and_free("Unable to get PATH", pipex, 1);
-	pipex->directories = ft_split(pipex->path, ':');
-	if (!pipex->directories)
-		exit_with_message_and_free("Split directories", pipex, 1);
 	get_pathname(pipex->cmd, pipex);
 }
 
@@ -94,7 +96,8 @@ void	init_outfile(t_pipex_b *pipex)
 {
 	if (access(pipex->path_outfile, F_OK) < 0)
 	{
-		pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_CREAT | O_TRUNC,
+				0644);
 		pipex->outfile_error = 0;
 	}
 	else
@@ -106,7 +109,6 @@ void	init_outfile(t_pipex_b *pipex)
 			pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_TRUNC);
 			pipex->outfile_error = 0;
 		}
-
 	}
 	if (pipex->outfile == -1)
 		perror("Opening or creating outfile");
