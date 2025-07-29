@@ -3,75 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/28 16:54:45 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/29 19:14:42 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex_bonus.h"
 
-// int	ft_pipex(t_pipex_b *pipex, char **env)
-// {
-// 	int	status;
-// 	int	i;
-
-// 	status = 0;
-// 	i = 0;
-// 	while (i < pipex->cmd_count)
-// 	{
-// 		pipex->pid[i] = fork();
-// 		if (pipex->pid[i] < 0)
-// 			exit_with_message_and_free("pid", pipex, 1);
-// 		if (pipex->pid[i] == 0)
-// 			//cmd_process(pipex, env);
-// 		// close(pipex->pipefd[0]);
-// 		close(pipex->pipefd[1]);
-// 		i++;
-// 	} // je pense que c'est pas la qu'il faut fermer mais on verra plus tard
-// 	// bah merde je dois boucler sur les argv aussi ptn
-// 	waitpid(pipex->pid[i], &status, 0);
-// 	if (pipex->outfile_error == 1)
-// 		return (1);
-// 	return ((status >> 8) & 0xFF);
-// 	// en fait il me faut un while dans cette fonction
-// }
-
 void	cmd_process(t_pipex_b *pipex, char **env, int index)
 {
-	int	i;
-
-	i = 0;
 	if (index == 0)
 	{
 		if (pipex->infile)
-		{
-			dup2(pipex->infile, 0);
-			close(pipex->infile);
-		}
+			ft_dup2_and_close(pipex->infile, 0);
 	}
 	else
-	{
-		dup2(pipex->pipefd[index - 1][0], 0);
-		close(pipex->pipefd[index - 1][0]);
-	}
+		ft_dup2_and_close(pipex->pipefd[index - 1][0], 0);
+
 	if (index == pipex->cmd_count - 1)
 	{
 		init_outfile(pipex);
-		dup2(pipex->outfile, 1);
-		close(pipex->outfile);
+		ft_dup2_and_close(pipex->outfile, 1);
 	}
 	else
-	{
-		dup2(pipex->pipefd[index][1], 1);
-		close(pipex->pipefd[index][1]);
-	}
-	while (i < pipex->cmd_count - 1)
-	{
-		close(pipex->pipefd[i][0]);
-		close(pipex->pipefd[i][1]);
-	}
+		ft_dup2_and_close(pipex->pipefd[index][1], 1);
+	close_fd(pipex, index);
 	if (pipex->pathname_cmd)
 		execve(pipex->pathname_cmd, pipex->cmd, env);
+	else if (!pipex->pathname_cmd && index == pipex->cmd_count - 1)
+		exit_with_message_and_free("cmd fail", pipex, 127);
+}
+
+void	close_fd(t_pipex_b *pipex, int index)
+{
+	int i;
+	
+	i = 0;
+	while (i < pipex->cmd_count - 1)
+	{
+		if (i != index && i != index - 1)
+		{
+			close(pipex->pipefd[i][0]);
+			close(pipex->pipefd[i][1]);
+		}
+		else if (i == index - 1)
+			close(pipex->pipefd[i][1]);
+		else if (i == index)
+			close(pipex->pipefd[i][0]);
+		i++;
+	}
+}
+
+void	ft_dup2_and_close(int fd, int n)
+{
+		dup2(fd, n);
+		close(fd);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/28 16:29:53 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/29 18:46:39 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,8 @@
 
 void	init_struct(t_pipex_b *pipex, char **av, char **env)
 {
-	pipex->infile = -1;
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
-		pipex->infile = 0;
+		pipex->infile = -2;
 	else
 	{
 		pipex->infile = open(av[1], O_RDONLY);
@@ -28,9 +27,7 @@ void	init_struct(t_pipex_b *pipex, char **av, char **env)
 	pipex->directories = NULL;
 	pipex->outfile_error = 1;
 	pipex->pathname_cmd = NULL;
-	pipex->prev_fd = -1;                                   // et ca ???
 	pipex->pid = malloc(pipex->cmd_count * sizeof(pid_t));
-		// finalement est ce que j'en ai besoin ... je crois bien
 	if (!pipex->pid)
 		exit_with_message_and_free("Malloc pids", pipex, 1);
 	pipex->pipefd = malloc(sizeof(int *) * (pipex->cmd_count - 1));
