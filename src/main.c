@@ -6,20 +6,11 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/17 17:49:05 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:19:47 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
-
-// arguments ./pipex file1 "cmd1" "cmd2" file2
-
-// equivaut a < file1 cmd1 | cmd2 > file 2
-//      < dirige le contenu de file1 dans l'input
-//      cmd1 va chercher dans file1
-//      | redirige l'output de cmd1 vers l'input de cmd2
-//      cmd2 s'execute a partir du resultat de cmd1
-//      > dirige l'output de cmd22 vers file2
 
 int	main(int argc, char **argv, char **env)
 {
@@ -48,9 +39,3 @@ int	main(int argc, char **argv, char **env)
 	free_struct(pipex);
 	return (ret);
 }
-
-// int execve(const char *pathname, char *const argv[], char *const envp[]);
-
-// ls -l -R
-
-// /usr/bin/ls {/usr/bin/ls, -l, -R} {env}

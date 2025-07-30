@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/29 19:16:09 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/30 17:35:14 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ int	main(int argc, char **argv, char **env)
 		exit_with_message("", "pipex malloc", 1);
 	pipex->path_outfile = argv[argc - 1];
 	pipex->cmd_count = argc - 3;
-	init_struct(pipex, argv, env);
-	if (pipex->infile == -2)
-		return (error_infile(pipex));
+	init_struct(pipex, env);
+	if (init_infile(pipex, argv) == 0)
+		return (0);
+	create_pipe(pipex);
 	ft_pipex(pipex, argv, env);
-	ret = ft_waitpid(pipex);	
+	ret = ft_waitpid(pipex);
 	if (pipex->outfile_error == 1)
 		return (1);
 	free_struct(pipex);
@@ -46,18 +47,20 @@ void	ft_pipex(t_pipex_b *pipex, char **argv, char **env)
 	while (i < pipex->cmd_count - 1)
 	{
 		init_cmd(pipex, argv[i + 2]);
-		pipex->pipefd[i] = malloc(sizeof(int) * 2);
-		if (pipe(pipex->pipefd[i]) == -1)
-			exit_with_message_and_free("Pipe", pipex, 1);
 		pipex->pid[i] = fork();
 		if (pipex->pid[i] < 0)
 			exit_with_message_and_free("pid", pipex, 1);
-		if (pipex->pid[i] == 0)
+		if (pipex->pid[i] == 0 && pipex->pathname_cmd)
 			cmd_process(pipex, env, i);
-		close(pipex->pipefd[i][1]);
+		if (pipex->pipefd[i][1] != -1)
+			close(pipex->pipefd[i][1]);
 		if (i > 0)
-			close(pipex->pipefd[i-1][0]);
+		{
+			if (pipex->pipefd[i - 1][0] != -1)
+				close(pipex->pipefd[i - 1][0]);
+		}
 		free_tab(pipex->cmd);
+		free(pipex->pathname_cmd);
 		i++;
 	}
 	last_cmd(pipex, argv, env, i);
@@ -72,14 +75,15 @@ void	last_cmd(t_pipex_b *pipex, char **argv, char **env, int i)
 		exit_with_message_and_free("pid", pipex, 1);
 	if (pipex->pid[i] == 0)
 		cmd_process(pipex, env, i);
-	close(pipex->pipefd[i-1][0]);
+	if (pipex->pipefd[i - 1][0] != -1)
+		close(pipex->pipefd[i - 1][0]);
 }
 
 int	ft_waitpid(t_pipex_b *pipex)
 {
 	int	i;
 	int	ret;
-	int status;
+	int	status;
 
 	i = 0;
 	ret = 0;
@@ -93,9 +97,19 @@ int	ft_waitpid(t_pipex_b *pipex)
 	return (ret);
 }
 
-int	error_infile(t_pipex_b *pipex)
+void	create_pipe(t_pipex_b *pipex)
 {
-	init_outfile(pipex);
-	free_struct(pipex);
-	return (0);
+	int i;
+
+	i = 0;
+	while (i < pipex->cmd_count - 1)
+	{
+		pipex->pipefd[i] = malloc(sizeof(int) * 2);
+		if (!pipex->pipefd[i])
+			exit_with_message_and_free("Malloc pipefd", pipex, 1);
+		if (pipe(pipex->pipefd[i]) == -1)
+			exit_with_message_and_free("Pipe", pipex, 1);
+		i++;
+	}
+	pipex->pipefd[i] = NULL;
 }

@@ -3,36 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/29 18:46:39 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/30 17:35:21 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex_bonus.h"
 
-void	init_struct(t_pipex_b *pipex, char **av, char **env)
+void	init_struct(t_pipex_b *pipex, char **env)
 {
-	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
-		pipex->infile = -2;
-	else
-	{
-		pipex->infile = open(av[1], O_RDONLY);
-		if (pipex->infile == -1)
-			perror("Opening infile");
-	}
+	int	i;
+
+	i = 0;
 	pipex->outfile = -1;
 	pipex->path = NULL;
 	pipex->directories = NULL;
 	pipex->outfile_error = 1;
 	pipex->pathname_cmd = NULL;
+	pipex->cmd = NULL;
 	pipex->pid = malloc(pipex->cmd_count * sizeof(pid_t));
 	if (!pipex->pid)
 		exit_with_message_and_free("Malloc pids", pipex, 1);
-	pipex->pipefd = malloc(sizeof(int *) * (pipex->cmd_count - 1));
+	pipex->pipefd = malloc(sizeof(int *) * (pipex->cmd_count));
 	if (!pipex->pipefd)
 		exit_with_message_and_free("Malloc pipefd", pipex, 1);
+	while (i < pipex->cmd_count)
+		pipex->pipefd[i++] = NULL;
 	pipex->path = get_env_value("PATH=", env);
 	if (!pipex->path)
 		exit_with_message_and_free("Unable to get PATH", pipex, 1);
@@ -71,12 +69,15 @@ void	get_pathname(char **cmd, t_pipex_b *pipex)
 		path = ft_strjoin(pipex->directories[i], temp);
 		if (access(path, X_OK) == 0)
 		{
-			pipex->pathname_cmd = path;
+			pipex->pathname_cmd = ft_strdup(path);
 			break ;
 		}
 		free(path);
+		path = NULL;
 		i++;
 	}
+	if (path)
+		free(path);
 	free(temp);
 }
 
@@ -109,4 +110,21 @@ void	init_outfile(t_pipex_b *pipex)
 	}
 	if (pipex->outfile == -1)
 		perror("Opening or creating outfile");
+}
+
+int	init_infile(t_pipex_b *pipex, char **av)
+{
+	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
+	{
+		init_outfile(pipex);
+		free_struct(pipex);
+		return (0);
+	}
+	else
+	{
+		pipex->infile = open(av[1], O_RDONLY);
+		if (pipex->infile == -1)
+			perror("Opening infile");
+	}
+	return (1);
 }

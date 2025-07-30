@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/29 19:14:42 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/30 16:38:45 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	cmd_process(t_pipex_b *pipex, char **env, int index)
 	}
 	else
 		ft_dup2_and_close(pipex->pipefd[index - 1][0], 0);
-
 	if (index == pipex->cmd_count - 1)
 	{
 		init_outfile(pipex);
@@ -29,35 +28,37 @@ void	cmd_process(t_pipex_b *pipex, char **env, int index)
 	}
 	else
 		ft_dup2_and_close(pipex->pipefd[index][1], 1);
-	close_fd(pipex, index);
+	close_fd(pipex);
 	if (pipex->pathname_cmd)
 		execve(pipex->pathname_cmd, pipex->cmd, env);
 	else if (!pipex->pathname_cmd && index == pipex->cmd_count - 1)
 		exit_with_message_and_free("cmd fail", pipex, 127);
 }
 
-void	close_fd(t_pipex_b *pipex, int index)
+void	close_fd(t_pipex_b *pipex)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	while (i < pipex->cmd_count - 1)
 	{
-		if (i != index && i != index - 1)
+		if (pipex->pipefd[i][0] != -1)
 		{
 			close(pipex->pipefd[i][0]);
-			close(pipex->pipefd[i][1]);
+			pipex->pipefd[i][0] = -1;
 		}
-		else if (i == index - 1)
+		if (pipex->pipefd[i][1] != -1)
+		{
 			close(pipex->pipefd[i][1]);
-		else if (i == index)
-			close(pipex->pipefd[i][0]);
+			pipex->pipefd[i][1] = -1;
+		}
 		i++;
 	}
 }
 
 void	ft_dup2_and_close(int fd, int n)
 {
-		dup2(fd, n);
+	dup2(fd, n);
+	if (fd != -1)
 		close(fd);
 }

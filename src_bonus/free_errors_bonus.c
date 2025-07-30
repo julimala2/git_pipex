@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_errors_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:11:29 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/29 18:26:44 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/07/30 17:02:44 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	exit_with_message(char *str, const char *str2, int n)
 	exit(n);
 }
 
-void	free_tab(char **tab)	 
+void	free_tab(char **tab)
 {
 	int	i;
 
@@ -37,7 +37,6 @@ void	free_tab(char **tab)
 
 void	exit_with_message_and_free(char *str, t_pipex_b *pipex, int n)
 {
-	ft_putendl_fd("Error\n", 2);
 	ft_putendl_fd(str, 2);
 	free_struct(pipex);
 	exit(n);
@@ -45,6 +44,9 @@ void	exit_with_message_and_free(char *str, t_pipex_b *pipex, int n)
 
 void	free_struct(t_pipex_b *pipex)
 {
+	int	i;
+
+	i = 0;
 	if (pipex)
 	{
 		if (pipex->directories)
@@ -54,10 +56,18 @@ void	free_struct(t_pipex_b *pipex)
 		if (pipex->pathname_cmd)
 			free(pipex->pathname_cmd);
 		if (pipex->cmd)
-			free_tab(pipex->cmd);		
-		if (pipex->pid)	
+			free_tab(pipex->cmd);
+		if (pipex->pid)
 			free(pipex->pid);
+		if (pipex->pipefd)
+		{
+			while (i < pipex->cmd_count)
+			{
+				free(pipex->pipefd[i]);
+				i++;
+			}
+			free(pipex->pipefd);
+		}
 		free(pipex);
 	}
 }
-
