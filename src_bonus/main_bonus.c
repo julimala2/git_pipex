@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/30 17:35:14 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:47:57 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	main(int argc, char **argv, char **env)
 	ft_pipex(pipex, argv, env);
 	ret = ft_waitpid(pipex);
 	if (pipex->outfile_error == 1)
-		return (1);
+		exit_with_message_and_free("", pipex, 1);
 	free_struct(pipex);
 	return (ret);
 }
@@ -99,7 +99,7 @@ int	ft_waitpid(t_pipex_b *pipex)
 
 void	create_pipe(t_pipex_b *pipex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < pipex->cmd_count - 1)

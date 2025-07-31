@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/30 17:06:32 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:48:39 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef struct s_pipex_b
 ///////////////////////////// utils.c ///////////////////////////////////
 char		*get_env_value(char *value, char **env);
 void		get_pathname(char **cmd, t_pipex_b *pipex);
-void		init_cmd(t_pipex_b *pipex, char *av);
 void		init_struct(t_pipex_b *pipex, char **env);
 void		init_outfile(t_pipex_b *pipex);
 int			init_infile(t_pipex_b *pipex, char **av);
@@ -50,11 +49,13 @@ void		exit_with_message(char *str, const char *str2, int n);
 void		exit_with_message_and_free(char *str, t_pipex_b *pipex, int n);
 void		free_tab(char **tab);
 void		free_struct(t_pipex_b *pipex);
+void		free_pipe(t_pipex_b *pipex);
 
 ///////////////////////////// pipex.c ///////////////////////////////////
 void		cmd_process(t_pipex_b *pipex, char **env, int index);
 void		close_fd(t_pipex_b *pipex);
 void		ft_dup2_and_close(int fd, int n);
+void		init_cmd(t_pipex_b *pipex, char *av);
 
 ///////////////////////////// main.c ////////////////////////////////////
 void		ft_pipex(t_pipex_b *pipex, char **argv, char **env);

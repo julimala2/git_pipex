@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:11:29 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/30 17:02:44 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:50:19 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,20 @@ void	free_struct(t_pipex_b *pipex)
 		if (pipex->pid)
 			free(pipex->pid);
 		if (pipex->pipefd)
-		{
-			while (i < pipex->cmd_count)
-			{
-				free(pipex->pipefd[i]);
-				i++;
-			}
-			free(pipex->pipefd);
-		}
+			free_pipe(pipex);
 		free(pipex);
 	}
+}
+
+void	free_pipe(t_pipex_b *pipex)
+{
+	int	i;
+
+	i = 0;
+	while (i < pipex->cmd_count)
+	{
+		free(pipex->pipefd[i]);
+		i++;
+	}
+	free(pipex->pipefd);
 }

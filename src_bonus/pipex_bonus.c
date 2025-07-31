@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/30 16:38:45 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:48:57 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,13 @@ void	ft_dup2_and_close(int fd, int n)
 	dup2(fd, n);
 	if (fd != -1)
 		close(fd);
+}
+
+void	init_cmd(t_pipex_b *pipex, char *av)
+{
+	pipex->cmd = NULL;
+	pipex->cmd = ft_split(av, ' ');
+	if (!pipex->cmd)
+		exit_with_message_and_free("Split cmd", pipex, 1);
+	get_pathname(pipex->cmd, pipex);
 }

@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/30 17:35:21 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/07/31 14:49:56 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,18 +76,11 @@ void	get_pathname(char **cmd, t_pipex_b *pipex)
 		path = NULL;
 		i++;
 	}
+	if (!path)
+		pipex->pathname_cmd = NULL;
 	if (path)
 		free(path);
 	free(temp);
-}
-
-void	init_cmd(t_pipex_b *pipex, char *av)
-{
-	pipex->cmd = NULL;
-	pipex->cmd = ft_split(av, ' ');
-	if (!pipex->cmd)
-		exit_with_message_and_free("Split cmd", pipex, 1);
-	get_pathname(pipex->cmd, pipex);
 }
 
 void	init_outfile(t_pipex_b *pipex)
