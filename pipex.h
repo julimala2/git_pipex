@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/17 16:46:17 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:09:32 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void		init_pipex(t_pipex *pipex, char **av, char **env);
 void		init_struct(t_pipex *pipex);
 
 ///////////////////////////// free_errors.c ///////////////////////////////////
-void		exit_with_message(char *str, const char *str2, int n);
+void		exit_with_message(char *str, int n);
 void		exit_with_message_and_free(char *str, t_pipex *pipex, int n);
 void		free_tab(char **tab);
 void		free_struct(t_pipex *pipex);

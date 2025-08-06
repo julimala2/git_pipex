@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/31 14:47:57 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:55:37 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,12 @@ int	main(int argc, char **argv, char **env)
 
 	ret = 0;
 	if (argc < 5)
-		exit_with_message("Incorrect number of arguments", "", 1);
+		exit_with_message("Incorrect number of arguments", 1);
 	if (access(argv[1], F_OK) < 0)
-		perror("Non existing infile");
+		perror(argv[1]);
 	pipex = malloc(sizeof(t_pipex_b));
 	if (!pipex)
-		exit_with_message("", "pipex malloc", 1);
+		exit_with_message("Pipex malloc", 1);
 	pipex->path_outfile = argv[argc - 1];
 	pipex->cmd_count = argc - 3;
 	init_struct(pipex, env);
@@ -34,7 +34,7 @@ int	main(int argc, char **argv, char **env)
 	ft_pipex(pipex, argv, env);
 	ret = ft_waitpid(pipex);
 	if (pipex->outfile_error == 1)
-		exit_with_message_and_free("", pipex, 1);
+		exit_with_message_and_free(NULL, pipex, 1);
 	free_struct(pipex);
 	return (ret);
 }
@@ -52,6 +52,8 @@ void	ft_pipex(t_pipex_b *pipex, char **argv, char **env)
 			exit_with_message_and_free("pid", pipex, 1);
 		if (pipex->pid[i] == 0 && pipex->pathname_cmd)
 			cmd_process(pipex, env, i);
+		else if (pipex->pid[i] == 0 && !pipex->pathname_cmd)
+			ft_printf("%s : Command not found\n", pipex->cmd[0]);
 		if (pipex->pipefd[i][1] != -1)
 			close(pipex->pipefd[i][1]);
 		if (i > 0)

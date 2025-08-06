@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/20 19:04:29 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:52:59 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,9 @@ int	ft_pipex(t_pipex *pipex, char **av, char **env)
 	int		status;
 
 	status = 0;
+	init_outfile(pipex, av);
+	if (pipex->outfile_error != 0)
+		return (1);
 	pid1 = fork();
 	if (pid1 < 0)
 		exit_with_message_and_free("pid1", pipex, 1);
@@ -27,15 +30,12 @@ int	ft_pipex(t_pipex *pipex, char **av, char **env)
 	pid2 = fork();
 	if (pid2 < 0)
 		exit_with_message_and_free("pid2", pipex, 1);
-	init_outfile(pipex, av);
 	if (pid2 == 0)
 		cmd2_process(pipex, env);
 	close(pipex->pipefd[0]);
 	close(pipex->pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
-	if (pipex->outfile_error == 1)
-		return (1);
 	return ((status >> 8) & 0xFF);
 }
 
@@ -45,7 +45,9 @@ void	cmd1_process(t_pipex *pipex, char **env)
 		dup2(pipex->infile, 0);
 	dup2(pipex->pipefd[1], 1);
 	close(pipex->pipefd[0]);
-	if (pipex->pathname_cmd1)
+	if (!pipex->pathname_cmd1)
+		ft_printf("Command not found");
+	else
 		execve(pipex->pathname_cmd1, pipex->cmd1, env);
 }
 
@@ -57,5 +59,5 @@ void	cmd2_process(t_pipex *pipex, char **env)
 	if (pipex->pathname_cmd2)
 		execve(pipex->pathname_cmd2, pipex->cmd2, env);
 	else
-		exit_with_message_and_free("cmd2 fail", pipex, 127);
+		exit_with_message_and_free("Command not found", pipex, 127);
 }

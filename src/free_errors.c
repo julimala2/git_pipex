@@ -3,22 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   free_errors.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:11:29 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/17 17:43:35 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/06 14:34:29 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../pipex.h"
 
-void	exit_with_message(char *str, const char *str2, int n)
+void	exit_with_message(char *str, int n)
 {
 	ft_putendl_fd("Error\n", 2);
-	if (str)
-		ft_putendl_fd(str, 2);
-	if (str2)
-		perror(str2);
+	ft_putendl_fd(str, 2);
 	exit(n);
 }
 
@@ -37,7 +34,6 @@ void	free_tab(char **tab)
 
 void	exit_with_message_and_free(char *str, t_pipex *pipex, int n)
 {
-	ft_putendl_fd("Error\n", 2);
 	ft_putendl_fd(str, 2);
 	free_struct(pipex);
 	exit(n);

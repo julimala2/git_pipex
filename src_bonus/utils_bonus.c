@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
+/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/07/31 14:49:56 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:13:03 by juliette-ma      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,20 +89,21 @@ void	init_outfile(t_pipex_b *pipex)
 	{
 		pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_CREAT | O_TRUNC,
 				0644);
-		pipex->outfile_error = 0;
+		if (pipex->outfile < 0)
+			perror(pipex->path_outfile);
+		else
+			pipex->outfile_error = 0;		
 	}
 	else
 	{
 		if (access(pipex->path_outfile, W_OK) < 0)
-			perror("Access outfile");
+			perror(pipex->path_outfile);
 		else
 		{
 			pipex->outfile = open(pipex->path_outfile, O_WRONLY | O_TRUNC);
 			pipex->outfile_error = 0;
 		}
 	}
-	if (pipex->outfile == -1)
-		perror("Opening or creating outfile");
 }
 
 int	init_infile(t_pipex_b *pipex, char **av)
@@ -113,11 +114,11 @@ int	init_infile(t_pipex_b *pipex, char **av)
 		free_struct(pipex);
 		return (0);
 	}
-	else
+	else if (access(av[1], F_OK) == 0)
 	{
 		pipex->infile = open(av[1], O_RDONLY);
 		if (pipex->infile == -1)
-			perror("Opening infile");
+			perror(av[1]);
 	}
 	return (1);
 }
