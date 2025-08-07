@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 15:13:03 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 15:18:20 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	init_outfile(t_pipex_b *pipex)
 		if (pipex->outfile < 0)
 			perror(pipex->path_outfile);
 		else
-			pipex->outfile_error = 0;		
+			pipex->outfile_error = 0;
 	}
 	else
 	{

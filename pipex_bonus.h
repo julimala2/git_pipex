@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:45 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 15:42:21 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 15:16:42 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_pipex_b
 {
 	int		infile;
 	int		outfile;
+	int		nullfile;
 	char	**cmd;
 	char	**directories;
 	char	*path;
@@ -56,6 +57,7 @@ void		cmd_process(t_pipex_b *pipex, char **env, int index);
 void		close_fd(t_pipex_b *pipex);
 void		ft_dup2_and_close(int fd, int n);
 void		init_cmd(t_pipex_b *pipex, char *av);
+void		ft_free(void *ptr);
 
 ///////////////////////////// main.c ////////////////////////////////////
 void		ft_pipex(t_pipex_b *pipex, char **argv, char **env);

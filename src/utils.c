@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 14:51:22 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 13:27:20 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ void	init_pipex(t_pipex *pipex, char **av, char **env)
 {
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
 	{
-			pipex->infile = -2;
-			perror(av[1]);
+		pipex->infile = -2;
+		perror(av[1]);
 	}
 	else if (access(av[1], F_OK) == 0)
 	{
@@ -104,15 +104,15 @@ void	init_outfile(t_pipex *pipex, char **av)
 		if (pipex->outfile < 0)
 			perror(av[4]);
 		else
-			pipex->outfile_error = 0;	
+			pipex->outfile_error = 0;
 	}
 	else
 	{
 		if (access(av[4], W_OK) < 0)
 			perror(av[4]);
-		else 
+		else
 		{
-			pipex->outfile = open(av[4], O_WRONLY | O_TRUNC | O_CREAT);
+			pipex->outfile = open(av[4], O_WRONLY | O_TRUNC, 0644);
 			if (pipex->outfile < 0)
 				perror(av[4]);
 			else

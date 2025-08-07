@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 16:01:05 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 16:00:01 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,12 @@ void	cmd_process(t_pipex_b *pipex, char **env, int index)
 		ft_dup2_and_close(pipex->pipefd[index - 1][0], 0);
 	if (index == pipex->cmd_count - 1)
 	{
-		init_outfile(pipex);
+		if (!pipex->pathname_cmd)
+			ft_printf("%s : Command not found\n", pipex->cmd[0]);
 		if (pipex->outfile_error == 0)
 			ft_dup2_and_close(pipex->outfile, 1);
-		else 
-			return ;
+		else
+			exit_with_message_and_free(NULL, pipex, 1);
 	}
 	else
 		ft_dup2_and_close(pipex->pipefd[index][1], 1);
@@ -35,10 +36,7 @@ void	cmd_process(t_pipex_b *pipex, char **env, int index)
 	if (pipex->pathname_cmd)
 		execve(pipex->pathname_cmd, pipex->cmd, env);
 	else if (!pipex->pathname_cmd && index == pipex->cmd_count - 1)
-	{
-		//ft_printf("%s : Command not found\n", pipex->cmd[0]);
-		exit_with_message_and_free("Last command not found", pipex, 127);
-	}
+		exit_with_message_and_free(NULL, pipex, 127);
 }
 
 void	close_fd(t_pipex_b *pipex)
@@ -76,4 +74,13 @@ void	init_cmd(t_pipex_b *pipex, char *av)
 	if (!pipex->cmd)
 		exit_with_message_and_free("Split cmd", pipex, 1);
 	get_pathname(pipex->cmd, pipex);
+}
+
+void	ft_free(void *ptr)
+{
+	if (ptr)
+	{
+		free(ptr);
+		ptr = NULL;
+	}
 }

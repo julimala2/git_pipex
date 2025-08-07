@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free_errors_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:11:29 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 15:43:40 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 15:17:58 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ void	free_struct(t_pipex_b *pipex)
 		if (pipex->directories)
 			free_tab(pipex->directories);
 		if (pipex->path)
-			free(pipex->path);
+			ft_free(pipex->path);
 		if (pipex->pathname_cmd)
-			free(pipex->pathname_cmd);
+			ft_free(pipex->pathname_cmd);
 		if (pipex->cmd)
 			free_tab(pipex->cmd);
 		if (pipex->pid)
-			free(pipex->pid);
+			ft_free(pipex->pid);
 		if (pipex->pipefd)
 			free_pipe(pipex);
 		free(pipex);

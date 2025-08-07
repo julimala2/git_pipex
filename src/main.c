@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 14:18:46 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 13:44:56 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int	main(int argc, char **argv, char **env)
 	init_pipex(pipex, argv, env);
 	if (pipe(pipex->pipefd) == -1)
 		exit_with_message_and_free("Pipe", pipex, 1);
-	if (pipex->infile == -2 || access(argv[1], F_OK) < 0)
+	if (pipex->infile == -2)
 	{
 		init_outfile(pipex, argv);
 		free_struct(pipex);

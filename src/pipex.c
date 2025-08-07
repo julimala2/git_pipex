@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 14:52:59 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 16:06:35 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,6 @@ int	ft_pipex(t_pipex *pipex, char **av, char **env)
 
 	status = 0;
 	init_outfile(pipex, av);
-	if (pipex->outfile_error != 0)
-		return (1);
 	pid1 = fork();
 	if (pid1 < 0)
 		exit_with_message_and_free("pid1", pipex, 1);
@@ -36,25 +34,31 @@ int	ft_pipex(t_pipex *pipex, char **av, char **env)
 	close(pipex->pipefd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
+	if (pipex->outfile_error != 0)
+		return (1);
 	return ((status >> 8) & 0xFF);
 }
 
 void	cmd1_process(t_pipex *pipex, char **env)
 {
-	if (pipex->infile)
+	if (!pipex->pathname_cmd1)
+	{
+		ft_printf("%s : Command not found\n", pipex->cmd1[0]);
+		exit_with_message_and_free(NULL, pipex, 127);
+	}
+	if (pipex->infile > 0)
 		dup2(pipex->infile, 0);
 	dup2(pipex->pipefd[1], 1);
 	close(pipex->pipefd[0]);
-	if (!pipex->pathname_cmd1)
-		ft_printf("Command not found");
-	else
+	if (pipex->pathname_cmd1)
 		execve(pipex->pathname_cmd1, pipex->cmd1, env);
 }
 
 void	cmd2_process(t_pipex *pipex, char **env)
 {
 	dup2(pipex->pipefd[0], 0);
-	dup2(pipex->outfile, 1);
+	if (pipex->outfile > 0)
+		dup2(pipex->outfile, 1);
 	close(pipex->pipefd[1]);
 	if (pipex->pathname_cmd2)
 		execve(pipex->pathname_cmd2, pipex->cmd2, env);

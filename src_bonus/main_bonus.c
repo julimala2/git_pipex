@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: juliette-malaval <juliette-malaval@stud    +#+  +:+       +#+        */
+/*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/06 15:55:37 by juliette-ma      ###   ########.fr       */
+/*   Updated: 2025/08/07 15:54:33 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ int	main(int argc, char **argv, char **env)
 	create_pipe(pipex);
 	ft_pipex(pipex, argv, env);
 	ret = ft_waitpid(pipex);
+	printf("outfile error dans main %d\n", pipex->outfile_error);
 	if (pipex->outfile_error == 1)
 		exit_with_message_and_free(NULL, pipex, 1);
 	free_struct(pipex);
@@ -53,14 +54,14 @@ void	ft_pipex(t_pipex_b *pipex, char **argv, char **env)
 		if (pipex->pid[i] == 0 && pipex->pathname_cmd)
 			cmd_process(pipex, env, i);
 		else if (pipex->pid[i] == 0 && !pipex->pathname_cmd)
+		{
 			ft_printf("%s : Command not found\n", pipex->cmd[0]);
+			exit_with_message_and_free(NULL, pipex, 127);
+		}
 		if (pipex->pipefd[i][1] != -1)
 			close(pipex->pipefd[i][1]);
-		if (i > 0)
-		{
-			if (pipex->pipefd[i - 1][0] != -1)
-				close(pipex->pipefd[i - 1][0]);
-		}
+		if (i > 0 && pipex->pipefd[i - 1][0] != -1)
+			close(pipex->pipefd[i - 1][0]);
 		free_tab(pipex->cmd);
 		free(pipex->pathname_cmd);
 		i++;
