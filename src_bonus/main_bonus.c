@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 15:54:33 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/08 14:10:49 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int	main(int argc, char **argv, char **env)
 	create_pipe(pipex);
 	ft_pipex(pipex, argv, env);
 	ret = ft_waitpid(pipex);
-	printf("outfile error dans main %d\n", pipex->outfile_error);
 	if (pipex->outfile_error == 1)
 		exit_with_message_and_free(NULL, pipex, 1);
 	free_struct(pipex);
