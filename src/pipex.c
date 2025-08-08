@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 16:06:35 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/08 16:03:35 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ void	cmd1_process(t_pipex *pipex, char **env)
 	}
 	if (pipex->infile > 0)
 		dup2(pipex->infile, 0);
+	else
+		exit_with_message_and_free(NULL, pipex, 127);
 	dup2(pipex->pipefd[1], 1);
 	close(pipex->pipefd[0]);
 	if (pipex->pathname_cmd1)
@@ -56,12 +58,15 @@ void	cmd1_process(t_pipex *pipex, char **env)
 
 void	cmd2_process(t_pipex *pipex, char **env)
 {
+	if (!pipex->pathname_cmd2)
+	{
+		ft_printf("%s : Command not found\n", pipex->cmd2[0]);
+		exit_with_message_and_free(NULL, pipex, 127);
+	}
 	dup2(pipex->pipefd[0], 0);
 	if (pipex->outfile > 0)
 		dup2(pipex->outfile, 1);
 	close(pipex->pipefd[1]);
 	if (pipex->pathname_cmd2)
 		execve(pipex->pathname_cmd2, pipex->cmd2, env);
-	else
-		exit_with_message_and_free("Command not found", pipex, 127);
 }

@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 13:06:34 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 13:44:56 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/08 16:22:49 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,46 @@ int	main(int argc, char **argv, char **env)
 	ret = ft_pipex(pipex, argv, env);
 	free_struct(pipex);
 	return (ret);
+}
+
+char	*get_env_value(char *value, char **env)
+{
+	size_t	len_value;
+	size_t	i;
+
+	len_value = ft_strlen(value);
+	i = 0;
+	while (env && env[i])
+	{
+		if (ft_strncmp(env[i], value, len_value) == 0)
+			return (ft_strdup(env[i] + len_value));
+		i++;
+	}
+	return (NULL);
+}
+
+void	get_pathname(char **cmd, t_pipex *pipex, int j)
+{
+	int		i;
+	char	*temp;
+	char	*path;
+
+	path = NULL;
+	i = 0;
+	temp = ft_strjoin("/", cmd[0]);
+	while (pipex->directories[i])
+	{
+		path = ft_strjoin(pipex->directories[i], temp);
+		if (access(path, X_OK) == 0)
+		{
+			if (j == 1)
+				pipex->pathname_cmd1 = path;
+			else if (j == 2)
+				pipex->pathname_cmd2 = path;
+			break ;
+		}
+		free(path);
+		i++;
+	}
+	free(temp);
 }

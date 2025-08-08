@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 13:27:20 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/08 16:22:38 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,61 +25,9 @@ void	init_struct(t_pipex *pipex)
 	pipex->pathname_cmd2 = NULL;
 }
 
-char	*get_env_value(char *value, char **env)
-{
-	size_t	len_value;
-	size_t	i;
-
-	len_value = ft_strlen(value);
-	i = 0;
-	while (env && env[i])
-	{
-		if (ft_strncmp(env[i], value, len_value) == 0)
-			return (ft_strdup(env[i] + len_value));
-		i++;
-	}
-	return (NULL);
-}
-
-void	get_pathname(char **cmd, t_pipex *pipex, int j)
-{
-	int		i;
-	char	*temp;
-	char	*path;
-
-	path = NULL;
-	i = 0;
-	temp = ft_strjoin("/", cmd[0]);
-	while (pipex->directories[i])
-	{
-		path = ft_strjoin(pipex->directories[i], temp);
-		if (access(path, X_OK) == 0)
-		{
-			if (j == 1)
-				pipex->pathname_cmd1 = path;
-			else if (j == 2)
-				pipex->pathname_cmd2 = path;
-			break ;
-		}
-		free(path);
-		i++;
-	}
-	free(temp);
-}
-
 void	init_pipex(t_pipex *pipex, char **av, char **env)
 {
-	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
-	{
-		pipex->infile = -2;
-		perror(av[1]);
-	}
-	else if (access(av[1], F_OK) == 0)
-	{
-		pipex->infile = open(av[1], O_RDONLY);
-		if (pipex->infile == -1)
-			perror(av[1]);
-	}
+	init_infile(pipex, av);
 	pipex->cmd1 = ft_split(av[2], ' ');
 	if (!pipex->cmd1)
 		exit_with_message_and_free("Split cmd1", pipex, 1);
@@ -94,6 +42,23 @@ void	init_pipex(t_pipex *pipex, char **av, char **env)
 		exit_with_message_and_free("Split directories", pipex, 1);
 	get_pathname(pipex->cmd1, pipex, 1);
 	get_pathname(pipex->cmd2, pipex, 2);
+}
+
+void	init_infile(t_pipex *pipex, char **av)
+{
+	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) < 0)
+	{
+		pipex->infile = -2;
+		perror(av[1]);
+	}
+	if (access(av[1], F_OK) == 0)
+	{
+		pipex->infile = open(av[1], O_RDONLY);
+		if (pipex->infile == -1)
+			perror(av[1]);
+	}
+	else if (access(av[1], F_OK) < 0)
+		pipex->infile = open("/dev/null", O_RDONLY);
 }
 
 void	init_outfile(t_pipex *pipex, char **av)

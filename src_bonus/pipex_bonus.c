@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 16:00:01 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/08 16:15:30 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	cmd_process(t_pipex_b *pipex, char **env, int index)
 	if (pipex->pathname_cmd)
 		execve(pipex->pathname_cmd, pipex->cmd, env);
 	else if (!pipex->pathname_cmd && index == pipex->cmd_count - 1)
+		exit_with_message_and_free(NULL, pipex, 127);
+	else
 		exit_with_message_and_free(NULL, pipex, 127);
 }
 
