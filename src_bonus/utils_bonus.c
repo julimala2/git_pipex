@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/07 15:18:20 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:20:10 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,5 +120,7 @@ int	init_infile(t_pipex_b *pipex, char **av)
 		if (pipex->infile == -1)
 			perror(av[1]);
 	}
+	else if (access(av[1], F_OK) < 0)
+		pipex->infile = open("/dev/null", O_RDONLY);
 	return (1);
 }

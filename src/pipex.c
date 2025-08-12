@@ -6,7 +6,7 @@
 /*   By: jmalaval <jmalaval@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/04 16:06:05 by jmalaval          #+#    #+#             */
-/*   Updated: 2025/08/08 16:03:35 by jmalaval         ###   ########.fr       */
+/*   Updated: 2025/08/12 16:15:34 by jmalaval         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	cmd2_process(t_pipex *pipex, char **env)
 	dup2(pipex->pipefd[0], 0);
 	if (pipex->outfile > 0)
 		dup2(pipex->outfile, 1);
+	else
+		exit_with_message_and_free(NULL, pipex, 1);
 	close(pipex->pipefd[1]);
 	if (pipex->pathname_cmd2)
 		execve(pipex->pathname_cmd2, pipex->cmd2, env);
